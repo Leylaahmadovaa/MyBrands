@@ -14,9 +14,9 @@ export default function Header() {
     <>
       <div className="flex justify-between items-center h-9 text-xs px-14 bg-[#f4f4f4]">
         <div className="flex gap-5 pl-12">
-          <div className="no-underline hover:underline">Haqqımızda</div>
-          <div className="no-underline hover:underline">Müştəri xidmətləri</div>
-          <div className="no-underline hover:underline">Bloq</div>
+          <div className="no-underline hover:underline hover:cursor-pointer">Haqqımızda</div>
+          <div className="no-underline hover:underline hover:cursor-pointer">Müştəri xidmətləri</div>
+          <div className="no-underline hover:underline hover:cursor-pointer">Bloq</div>
         </div>
         <div className="mr-12 hover:cursor-pointer">
           AZ
@@ -26,8 +26,15 @@ export default function Header() {
         </div>
       </div>
       <div className="flex justify-between px-[100px] h-[100px] items-center">
-        <NavLink to="/" className="no-underline hover:underline">
-          <img src="https://mybrands.az/img/logo.svg" alt="logoOWebsite" />
+        <NavLink to="/" className="no-underline hover:underline border-none"
+        style={{
+          border:"none"
+        }}
+        >
+          <img style={{
+            border:"none"
+          }} 
+          src="https://mybrands.az/img/logo.svg" alt="logoOWebsite" />
         </NavLink>
         <div className="flex gap-7">
           <div className="flex gap-7">
@@ -58,7 +65,12 @@ export default function Header() {
               >{wishListProducts.length>0?wishListProducts.length:""}</span>
             </NavLink>
             <div
-            onClick={()=>setShowOrDontShowCart(prev=>!prev)}
+            onClick={()=>{
+              setShowOrDontShowCart(prev=>!prev)
+              if(!isLogged){
+                alert("Hesabınıza daxil olmamısınız")
+              }
+            }}
             className="hover:cursor-pointer flex"
             >
             <img
@@ -83,7 +95,7 @@ export default function Header() {
               {cartProducts?.cart_items?.length>0? cartProducts?.cart_items?.length:""}
               </span>
             </div>
-            {showOrDontShowCart==true&&<Cart/>}
+            {showOrDontShowCart==true&&isLogged&&<Cart/>}
           </div>
           <NavLink to="/login-page">
             <div className="flex gap-3 border-l-2 pl-8">

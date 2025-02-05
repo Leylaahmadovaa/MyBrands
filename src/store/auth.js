@@ -11,7 +11,6 @@ const initialState = {
 };
 // ]
 
-
 // const initialState = { isLogged: false, access: "", refresh: "" };
 const authStore = createSlice({
   name: "auth",

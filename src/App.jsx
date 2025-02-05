@@ -8,7 +8,11 @@ import {
   TrendProducts,
   WishListProducts,
   CartProducts,
-  PageNumber
+  PageNumber,
+  MinimumPrice,
+  MaximumPrice,
+  LoadingProducts,
+  Productss
 } from "../src/store/ContextApi";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import RootLayout from "./RootLayout";
@@ -84,6 +88,11 @@ function App() {
   const [subCategoryList, setSubCategoryList] = useState(productSubCategoryList);
   const [subSqrCategoryList, setSubSqrCategoryList] = useState(productSubSqrCategoryList);
   const [pageNumber, setPageNumber] = useState(1);
+  const [minPrice, setMinPrice] = useState("");
+  const [maxPrice, setMaxPrice] = useState("");
+  const [loading,setLoading] = useState(true);
+  const [productss, setProductss] = useState([]);//to determine finish page
+  
   useEffect(() => {
     async function getBanners() {
       let bannerss = await fetch(
@@ -94,7 +103,9 @@ function App() {
       setBanners(bannerss);
     }
     getBanners();
+  },[])
 
+  useEffect(() => {
     async function getTrendProducts() {
       let trendData = await fetch(
         `https://test.mybrands.az/api/v1/products/top-sale-trend-products/`
@@ -104,16 +115,36 @@ function App() {
       setTrendProducts(trendData);
     }
     getTrendProducts();
+  },[gender])
 
+  useEffect(() => {//to determine finish page
+    async function getProductss() {
+      let data1 = await fetch(
+        `http://test.mybrands.az/api/v1/products/?categories=${category}&page=${pageNumber+1}&product__gender=${gender}&max_price=${maxPrice}&min_price=${minPrice}` //geyim kisiler
+      )
+      .then((res) => res.json())
+      .then((res) => res.results);
+      setProductss(data1);
+      setLoading(false)
+    }
+    getProductss();
+  },[pageNumber])
+
+  useEffect(() => {
     async function getProducts() {
       let data = await fetch(
-        `http://test.mybrands.az/api/v1/products/?categories=${category}&page=${pageNumber}&product__gender=${gender}` //geyim kisiler
+        `http://test.mybrands.az/api/v1/products/?categories=${category}&page=${pageNumber}&product__gender=${gender}&max_price=${maxPrice}&min_price=${minPrice}` //geyim kisiler
       )
       .then((res) => res.json())
       .then((res) => res.results);
       setProducts(data);
+      setLoading(false)
     }
-    getProducts();
+
+    if(Number(minPrice)<=Number(maxPrice)||minPrice==""||maxPrice==""||minPrice=="0"){
+      setLoading(true)
+      getProducts();
+    }
     
     if(category=="2"||category=="1"||category=="5"||category=="4"||category=="6"){
       async function getSubCategoryList() {
@@ -138,7 +169,11 @@ function App() {
       getSubSqrCategoryList();
     }
     
-  }, [gender, category, pageNumber]);
+  }, [gender, category, pageNumber, minPrice, maxPrice]);
+  
+  useEffect(()=>{
+    setPageNumber(1)
+  },[gender, category, minPrice, maxPrice])
   
   useEffect(()=>{
     if (isLogged) {
@@ -191,7 +226,15 @@ function App() {
                     <WishListProducts.Provider value={{ wishListProducts, setWishListProducts }}>
                       <CartProducts.Provider value={{ cartProducts, setCartProducts }}>
                         <PageNumber.Provider value={{ pageNumber, setPageNumber }}>
-                           <RouterProvider router={router} />
+                          <MinimumPrice.Provider value={{minPrice, setMinPrice}}>
+                           <MaximumPrice.Provider value={{maxPrice, setMaxPrice}}>
+                            <LoadingProducts.Provider value={{loading,setLoading}}>
+                              <Productss.Provider value={{productss, setProductss}}>
+                                <RouterProvider router={router} />
+                              </Productss.Provider>
+                            </LoadingProducts.Provider>
+                           </MaximumPrice.Provider>
+                          </MinimumPrice.Provider>
                         </PageNumber.Provider>
                       </CartProducts.Provider>
                     </WishListProducts.Provider>

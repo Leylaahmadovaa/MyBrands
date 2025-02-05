@@ -9,6 +9,7 @@ export default function GenderCategoryPage() {
     <>
       <div className="ml-[90px]">
         <Carousel
+          autoplay={true}
           className="w-[1350px]"
           draggable={true}
           arrows={true}
