@@ -93,27 +93,29 @@ function App() {
   const [loading,setLoading] = useState(true);
   const [productss, setProductss] = useState([]);//to determine finish page
   
+  async function getBanners() {
+    let bannerss = await fetch(
+      `https://test.mybrands.az/api/v1/campaigns`
+    )
+    .then((res) => res.json())
+      .then((res) => res);
+    setBanners(bannerss);
+  }
+
   useEffect(() => {
-    async function getBanners() {
-      let bannerss = await fetch(
-        `https://test.mybrands.az/api/v1/campaigns`
-      )
-      .then((res) => res.json())
-        .then((res) => res);
-      setBanners(bannerss);
-    }
     getBanners();
   },[])
 
+  async function getTrendProducts() {
+    let trendData = await fetch(
+      `https://test.mybrands.az/api/v1/products/top-sale-trend-products/`
+    )
+    .then((res) => res.json())
+    .then((res) => res.trend_products);
+    setTrendProducts(trendData);
+  }
+  
   useEffect(() => {
-    async function getTrendProducts() {
-      let trendData = await fetch(
-        `https://test.mybrands.az/api/v1/products/top-sale-trend-products/`
-      )
-      .then((res) => res.json())
-      .then((res) => res.trend_products);
-      setTrendProducts(trendData);
-    }
     getTrendProducts();
   },[gender])
 
